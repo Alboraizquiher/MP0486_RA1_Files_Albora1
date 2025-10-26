@@ -1,5 +1,9 @@
 package main;
 
+import dao.Dao;
+import dao.DaoImplFile;
+
+
 import model.Product;
 import model.Sale;
 import model.Amount;
@@ -18,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Shop {
+	private Dao dao = new DaoImplFile();
+
 	private Amount cash = new Amount(100.00);
 //	private Product[] inventory;
 	private ArrayList<Product> inventory;
@@ -113,6 +119,7 @@ public class Shop {
 			System.out.println("===========================");
 			System.out.println("Menu principal miTienda.com");
 			System.out.println("===========================");
+			System.out.println("0) Exportar inventario");
 			System.out.println("1) Contar caja");
 			System.out.println("2) Añadir producto");
 			System.out.println("3) Añadir stock");
@@ -127,6 +134,10 @@ public class Shop {
 			opcion = scanner.nextInt();
 
 			switch (opcion) {
+			case 0:
+			    shop.writeInventory();
+			    break;
+
 			case 1:
 				shop.showCash();
 				break;
@@ -210,73 +221,34 @@ public class Shop {
 	}
 
 	/**
-	 * read inventory from file
+	 * read inventory from file (delegated to Dao implementation)
 	 */
 	private void readInventory() {
-		// locate file, path and name
-		File f = new File(System.getProperty("user.dir") + File.separator + "files/inputInventory.txt");
-		
-		try {			
-			// wrap in proper classes
-			FileReader fr;
-			fr = new FileReader(f);				
-			BufferedReader br = new BufferedReader(fr);
-			
-			// read first line
-			String line = br.readLine();
-			
-			// process and read next line until end of file
-			while (line != null) {
-				// split in sections
-				String[] sections = line.split(";");
-				
-				String name = "";
-				double wholesalerPrice=0.0;
-				int stock = 0;
-				
-				// read each sections
-				for (int i = 0; i < sections.length; i++) {
-					// split data in key(0) and value(1) 
-					String[] data = sections[i].split(":");
-					
-					switch (i) {
-					case 0:
-						// format product name
-						name = data[1];
-						break;
-						
-					case 1:
-						// format price
-						wholesalerPrice = Double.parseDouble(data[1]);
-						break;
-						
-					case 2:
-						// format stock
-						stock = Integer.parseInt(data[1]);
-						break;
-						
-					default:
-						break;
-					}
-				}
-				// add product to inventory
-				addProduct(new Product(name, new Amount(wholesalerPrice), true, stock));
-				
-				// read next line
-				line = br.readLine();
-			}
-			fr.close();
-			br.close();
-			
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	    // Usa el DAO en lugar de lógica manual con FileReader
+	    this.inventory = new ArrayList<>(dao.getInventory());
+
+	    // Actualiza el contador de productos
+	    this.numberProducts = inventory.size();
+
+	    System.out.println("Inventario cargado correctamente desde fichero. Productos: " + numberProducts);
 	}
+
+	/**
+	 * Exporta el inventario actual a un fichero inventory_yyyy-mm-dd.txt
+	 * utilizando el Dao (DaoImplFile)
+	 */
+	public boolean writeInventory() {
+	    boolean success = dao.writeInventory(this.inventory);
+
+	    if (success) {
+	        System.out.println(" Inventario exportado correctamente a la carpeta 'files'.");
+	    } else {
+	        System.out.println(" Error al exportar el inventario. Revisa permisos o ruta.");
+	    }
+
+	    return success;
+	}
+
 
 	/**
 	 * show current total cash
