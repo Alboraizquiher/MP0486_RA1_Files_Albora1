@@ -61,5 +61,18 @@ public class DaoImplJDBC implements Dao {
 		}
     	return employee;
 	}
+	
+	@Override
+	public java.util.List<model.Product> getInventory() {
+	    // No implementado para JDBC
+	    return null;
+	}
+
+	@Override
+	public boolean writeInventory(java.util.List<model.Product> inventory) {
+	    // No implementado para JDBC
+	    return false;
+	}
+
 
 }
