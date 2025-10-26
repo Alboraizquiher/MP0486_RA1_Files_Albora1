@@ -1,6 +1,9 @@
 package dao;
 
+import java.util.List;
+
 import model.Employee;
+import model.Product;
 
 public interface Dao {
 	
@@ -8,8 +11,11 @@ public interface Dao {
 
 	public void disconnect();
 	
-	public void name();
 
 	public Employee getEmployee(int employeeId, String password);
 	
+	//NUEVOS METODOS INCORPORADOS
+	
+	public List<Product> getInventory();
+	public boolean writeInventory(List<Product> inventory);
 }
