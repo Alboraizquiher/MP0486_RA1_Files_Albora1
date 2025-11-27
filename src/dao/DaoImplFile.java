@@ -1,6 +1,10 @@
 package dao;
 
 import java.io.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +33,36 @@ public class DaoImplFile implements Dao {
 
 	@Override
 	public List<Product> getInventory() {
-		List<Product> products = new ArrayList<>();
-		File f = new File(System.getProperty("user.dir") + File.separator + "files" + File.separator + "inputInventory.txt");
+	    List<Product> products = new ArrayList<>();
+	    
+	    String url = "jdbc:mysql://localhost:3306/shop";
+	    String user = "root";
+	    String pass = "";
+
+	    String sql = "SELECT name, wholesalerPrice, available, stock FROM inventory";
+
+	    try (Connection conn = DriverManager.getConnection(url, user, pass);
+	         PreparedStatement ps = conn.prepareStatement(sql);
+	         ResultSet rs = ps.executeQuery()) {
+
+	        while (rs.next()) {
+	            String name = rs.getString("name");
+	            double wholesalerPrice = rs.getDouble("wholesalerPrice"); // <-- corregido
+	            boolean available = rs.getBoolean("available");
+	            int stock = rs.getInt("stock");
+
+	            Product p = new Product(name, new Amount(wholesalerPrice), available, stock);
+	            products.add(p);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return products;
+	}
+		
+		/*File f = new File(System.getProperty("user.dir") + File.separator + "files" + File.separator + "inputInventory.txt");
 
 		try (BufferedReader br = new BufferedReader(new FileReader(f))) {
 			String line;
@@ -64,7 +96,7 @@ public class DaoImplFile implements Dao {
 		}
 
 		return products;
-	}
+	}*/
 
 
 	@Override
@@ -112,6 +144,30 @@ public class DaoImplFile implements Dao {
 	        System.err.println(" Error al guardar archivo en: " + f.getAbsolutePath());
 	        return false;
 	    }
+	}
+
+	@Override
+	public boolean addProduct(Product product) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean updateProduct(Product product) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean deleteProduct(int productId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean exportInventory(List<Product> inventory) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
