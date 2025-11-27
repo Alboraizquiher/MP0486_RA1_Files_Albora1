@@ -176,7 +176,7 @@ public class ShopView extends JFrame implements ActionListener, KeyListener {
 		if (success) {
 			JOptionPane.showMessageDialog(
 				this,
-				" Inventario exportado correctamente.\nEl fichero se ha guardado en la carpeta 'files'.",
+				" Inventario exportado correctamente.\nEl fichero se ha guardado en la base de datos Shop",
 				"Exportación exitosa",
 				JOptionPane.INFORMATION_MESSAGE
 			);
