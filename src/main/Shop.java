@@ -2,8 +2,7 @@ package main;
 
 import dao.Dao;
 import dao.DaoImplFile;
-
-
+import dao.DaoImplJDBC;
 import model.Product;
 import model.Sale;
 import model.Amount;
@@ -22,7 +21,10 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Shop {
-	private Dao dao = new DaoImplFile();
+	/*private Dao dao = new DaoImplFile();*/
+	private Dao dao = new DaoImplJDBC();
+	
+
 
 	private Amount cash = new Amount(100.00);
 //	private Product[] inventory;
@@ -35,8 +37,12 @@ public class Shop {
 	final static double TAX_RATE = 1.04;
 
 	public Shop() {
+		   dao = new DaoImplJDBC();
+		    dao.connect(); // abre conexión
+		    inventory = new ArrayList<>();
+		    sales = new ArrayList<>();
 		inventory = new ArrayList<Product>();
-		sales = new ArrayList<Sale>();
+	
 	}
 	
 	
@@ -237,8 +243,22 @@ public class Shop {
 	 * Exporta el inventario actual a un fichero inventory_yyyy-mm-dd.txt
 	 * utilizando el Dao (DaoImplFile)
 	 */
-	public boolean writeInventory() {
-	    boolean success = dao.writeInventory(this.inventory);
+		
+		public boolean writeInventory() {
+		    // Ahora exportamos a la tabla historical_inventory en la base de datos
+		    boolean success = dao.exportInventory(this.inventory);
+
+		    if (success) {
+		        System.out.println("Inventario exportado correctamente a la base de datos.");
+		    } else {
+		        System.out.println("Error al exportar el inventario a la base de datos.");
+		    }
+
+		    return success;
+		
+
+	   
+		/*boolean success = dao.writeInventory(this.inventory);
 
 	    if (success) {
 	        System.out.println(" Inventario exportado correctamente a la carpeta 'files'.");
@@ -246,7 +266,7 @@ public class Shop {
 	        System.out.println(" Error al exportar el inventario. Revisa permisos o ruta.");
 	    }
 
-	    return success;
+	    return success;*/
 	}
 
 
@@ -285,20 +305,20 @@ public class Shop {
 			return;
 		}
 		Scanner scanner = new Scanner(System.in);
-		System.out.print("Seleccione un nombre de producto: ");
-		String name = scanner.next();
-		Product product = findProduct(name);
+		System.out.print("Seleccione un id de producto: ");
+		String id = scanner.next();
+		Product product = findProduct(id);
 
 		if (product != null) {
 			// remove it
 			if (inventory.remove(product)) {
-				System.out.println("El producto " + name + " ha sido eliminado");
+				System.out.println("El producto " + id + " ha sido eliminado");
 
 			} else {
-				System.out.println("No se ha encontrado el producto con nombre " + name);
+				System.out.println("No se ha encontrado el producto con nombre " + id);
 			}
 		} else {
-			System.out.println("No se ha encontrado el producto con nombre " + name);
+			System.out.println("No se ha encontrado el producto con nombre " + id);
 		}
 	}
 
@@ -335,7 +355,7 @@ public class Shop {
 		Product product = findProduct(name);
 
 		if (product != null) {
-			product.expire();
+			product.isAvailable();
 			System.out.println("El precio del producto " + name + " ha sido actualizado a " + product.getPublicPrice());
 		}
 	}
