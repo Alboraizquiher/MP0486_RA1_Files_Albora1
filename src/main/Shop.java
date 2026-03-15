@@ -22,7 +22,7 @@ import java.util.Scanner;
 
 public class Shop {
 	/*private Dao dao = new DaoImplFile();*/
-	private Dao dao = new DaoImplJDBC();
+	private Dao dao = new DaoImplMongoDB();
 	
 
 
@@ -37,7 +37,7 @@ public class Shop {
 	final static double TAX_RATE = 1.04;
 
 	public Shop() {
-		   dao = new DaoImplJDBC();
+		   dao = new DaoImplMongoDB();
 		    dao.connect(); // abre conexión
 		    inventory = new ArrayList<>();
 		    sales = new ArrayList<>();
