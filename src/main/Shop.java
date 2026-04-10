@@ -9,6 +9,9 @@ import model.Amount;
 import model.Client;
 import model.Employee;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -565,6 +568,29 @@ public class Shop {
 		}
 		return null;
 
+	}
+
+	public static void createUsers()
+	{
+		EntityManagerFactory emf =
+				Persistence.createEntityManagerFactory("objects/users.odb");
+
+			EntityManager em = emf.createEntityManager();
+
+			em.getTransaction().begin();
+
+			Employee emp1 = new Employee(1, "Albora", "3456");
+			Employee emp2 = new Employee(2, "Admin", "admin");
+
+			em.persist(emp1);
+			em.persist(emp2);
+
+			em.getTransaction().commit();
+
+			em.close();
+			emf.close();
+
+			System.out.println("Usuarios creados correctamente");
 	}
 
 }
