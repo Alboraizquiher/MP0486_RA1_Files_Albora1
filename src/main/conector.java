@@ -1,10 +1,10 @@
 package main;
 
-import dao.DaoImplJDBC;
+import dao.DaoImplMongoDB;
 
 public class conector {
     public static void main(String[] args) {
-        DaoImplJDBC dao = new DaoImplJDBC();
+    	DaoImplMongoDB dao = new DaoImplMongoDB();
         dao.connect();
         dao.disconnect();
     }

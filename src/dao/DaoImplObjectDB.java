@@ -1,102 +1,82 @@
 package dao;
 
 import java.util.ArrayList;
-
+import java.util.List;
 import javax.persistence.*;
 
 import model.Employee;
 import model.Product;
 
-public class DaoImplObjectDB implements Dao
-{
-	private EntityManagerFactory emf;
-	private EntityManager em;
+public class DaoImplObjectDB implements Dao {
 
-	@Override
-	public void connect()
-	{
-		emf = Persistence.createEntityManagerFactory("objects/users.odb");
-		em = emf.createEntityManager();
-	}
+    // ✅ UNA SOLA VEZ EN TODA LA APLICACIÓN
+    private static EntityManagerFactory emf =
+            Persistence.createEntityManagerFactory("objectdb:objects/users.odb");
 
-	@Override
-	public Employee getEmployee(int employeeId, String password)
-	{
-		Employee employee = null;
+    private EntityManager em;
 
-		try
-		{
-			TypedQuery<Employee> query = em.createQuery(
-					"SELECT e FROM Employee e WHERE e.employeeId = :id AND e.password = :pass",
-					Employee.class);
+    @Override
+    public void connect() {
+        // ✅ SOLO abrimos EntityManager
+        em = emf.createEntityManager();
+    }
 
-			query.setParameter("id", employeeId);
-			query.setParameter("pass", password);
+    @Override
+    public Employee getEmployee(int employeeId, String password) {
+        Employee employee = null;
 
-			ArrayList<Employee> result = new ArrayList<>(query.getResultList());
+        try {
+            TypedQuery<Employee> query = em.createQuery(
+                    "SELECT e FROM Employee e WHERE e.employeeId = :id AND e.password = :pass",
+                    Employee.class);
 
-			if (!result.isEmpty())
-			{
-				employee = result.get(0);
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+            query.setParameter("id", employeeId);
+            query.setParameter("pass", password);
 
-		return employee;
-	}
+            List<Employee> result = query.getResultList();
 
-	@Override
-	public void disconnect()
-	{
-		if (em != null)
-			em.close();
+            if (!result.isEmpty()) {
+                employee = result.get(0);
+            }
 
-		if (emf != null)
-			emf.close();
-	}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        return employee;
+    }
 
-	
-	
-	
-	//All the methods below are created but not implemented because is not needed
+    @Override
+    public void disconnect() {
+        // ✅ SOLO cerramos el EntityManager
+        if (em != null) {
+            em.close();
+        }
+    }
 
+    // ================= NO IMPLEMENTADOS =================
 
-	@Override
-	public ArrayList<Product> getInventory()
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public ArrayList<Product> getInventory() {
+        return new ArrayList<>();
+    }
 
-	@Override
-	public boolean writeInventory(ArrayList<Product> inventario)
-	{
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public void addProduct(Product product) {}
 
-	@Override
-	public void addProduct(Product product)
-	{
-		// TODO Auto-generated method stub
+    @Override
+    public void updateProduct(Product product) {}
 
-	}
+    @Override
+    public void deleteProduct(int productId) {}
 
-	@Override
-	public void updateProduct(Product product)
-	{
-		// TODO Auto-generated method stub
+    @Override
+    public boolean writeInventory(List<Product> inventory) {
+        return false;
+    }
 
-	}
-
-	@Override
-	public void deleteProduct(int productId)
-	{
-		// TODO Auto-generated method stub
-
-	}
+    @Override
+    public boolean exportInventory(List<Product> inventory) {
+        return false;
+    }
 }

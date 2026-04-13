@@ -1,13 +1,24 @@
 package model;
 
 import main.Logable;
+
 import javax.persistence.*;
 import dao.*;
+@Entity
+@Table(name= "Employee")
 
 public class Employee extends Person implements Logable{
+
+	@Id
+	@Column
 	private int employeeId;
+	@Column
+	private String name;
+	
+	@Column
 	private String password;
 	// connection using JDBC SQL
+	@Transient
 	private Dao dao = new DaoImplObjectDB();
 	
 //	public static final int USER = 123;
@@ -42,7 +53,7 @@ public class Employee extends Person implements Logable{
 	}
 
 	/**
-	 * @return the password
+	* @return the password
 	 */
 	public String getPassword() {
 		return password;

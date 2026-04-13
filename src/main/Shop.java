@@ -3,6 +3,8 @@ package main;
 import dao.Dao;
 import dao.DaoImplFile;
 import dao.DaoImplJDBC;
+import dao.DaoImplMongoDB;
+import dao.DaoImplObjectDB;
 import model.Product;
 import model.Sale;
 import model.Amount;
@@ -25,7 +27,7 @@ import java.util.Scanner;
 
 public class Shop {
 	/*private Dao dao = new DaoImplFile();*/
-	private Dao dao = new DaoImplMongoDB();
+	private Dao dao = new DaoImplObjectDB();
 	
 
 
@@ -40,7 +42,7 @@ public class Shop {
 	final static double TAX_RATE = 1.04;
 
 	public Shop() {
-		   dao = new DaoImplMongoDB();
+		   dao = new DaoImplObjectDB();
 		    dao.connect(); // abre conexión
 		    inventory = new ArrayList<>();
 		    sales = new ArrayList<>();
@@ -572,25 +574,7 @@ public class Shop {
 
 	public static void createUsers()
 	{
-		EntityManagerFactory emf =
-				Persistence.createEntityManagerFactory("objects/users.odb");
-
-			EntityManager em = emf.createEntityManager();
-
-			em.getTransaction().begin();
-
-			Employee emp1 = new Employee(1, "Albora", "3456");
-			Employee emp2 = new Employee(2, "Admin", "admin");
-
-			em.persist(emp1);
-			em.persist(emp2);
-
-			em.getTransaction().commit();
-
-			em.close();
-			emf.close();
-
-			System.out.println("Usuarios creados correctamente");
+		
 	}
 
 }
